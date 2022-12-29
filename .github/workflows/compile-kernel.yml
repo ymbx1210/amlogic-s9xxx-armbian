@@ -48,7 +48,7 @@ on:
       kernel_sign:
         description: "Set the kernel custom signature"
         required: false
-        default: "-wb"
+        default: ""
       kernel_config:
         description: "Set the path of kernel .config"
         required: false
@@ -103,3 +103,10 @@ jobs:
           body: |
             The kernel can be used to compile Armbian and OpenWrt.
             The kernel source code comes from: ${{ inputs.kernel_source }}
+            
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        if: ${{ env.PACKAGED_STATUS }} == 'success' && !cancelled()
+        with:
+          name: kernel_${{ env.PACKAGED_OUTPUTTAGS }}
+          path: ${{ env.PACKAGED_OUTPUTPATH }}/*
